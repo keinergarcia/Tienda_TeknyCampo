@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Tractor, Droplets, Sprout, Shield, Truck, HeadphonesIcon } from 'lucide-react';
 import { useProducts } from '@/context/ProductContext';
@@ -5,6 +6,7 @@ import { ProductCard } from '@/components/products/ProductCard';
 import { CategoryCard } from '@/components/products/CategoryCard';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { supabase } from '@/lib/supabase';
 
 const features = [
   {
@@ -33,19 +35,43 @@ const categoryIcons = [Tractor, Droplets, Sprout, Shield];
 
 export function HomePage() {
   const { featuredProducts, offerProducts, categories, loading } = useProducts();
+  const [heroImages, setHeroImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    supabase.from('hero_images').select('url').order('created_at', { ascending: false }).then(({ data }) => {
+      if (data && data.length > 0) {
+        const urls = data.map((img) =>
+          `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/hero-images/${img.url}`
+        );
+        setHeroImages(urls);
+      }
+    });
+  }, []);
 
   if (loading) {
     return <LoadingSpinner text="Cargando productos..." />;
   }
 
+  const heroBg = heroImages[0]
+    ? { backgroundImage: `url(${heroImages[0]})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+    : {};
+
   return (
     <div>
       {/* Hero Banner */}
-      <section className="relative bg-gradient-to-r from-primary-700 via-primary-600 to-primary-500 overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2" />
-        </div>
+      <section
+        className={`relative overflow-hidden ${heroImages[0] ? '' : 'bg-gradient-to-r from-primary-700 via-primary-600 to-primary-500'}`}
+        style={heroImages[0] ? heroBg : {}}
+      >
+        {heroImages[0] && (
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/60" />
+        )}
+        {!heroImages[0] && (
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2" />
+          </div>
+        )}
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
           <div className="text-center">

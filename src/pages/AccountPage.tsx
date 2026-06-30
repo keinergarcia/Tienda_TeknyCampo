@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, ShoppingBag, Heart, LogOut, Settings, Package, Save, Trash2, ArrowLeft, Key, CheckCircle, AlertCircle, Layers, Percent, ShoppingCart } from 'lucide-react';
+import { User, Mail, Lock, ShoppingBag, Heart, LogOut, Settings, Package, Save, Trash2, ArrowLeft, Key, CheckCircle, AlertCircle, Layers, Percent, ShoppingCart, Image } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { supabase } from '@/lib/supabase';
@@ -8,6 +8,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ProductsAdmin } from '@/pages/admin/ProductsAdmin';
 import { CategoriesAdmin } from '@/pages/admin/CategoriesAdmin';
 import { OffersAdmin } from '@/pages/admin/OffersAdmin';
+import { HeroImagesAdmin } from '@/pages/admin/HeroImagesAdmin';
 import type { Order, WishlistItem } from '@/types';
 
 function CheckoutView() {
@@ -43,7 +44,7 @@ export function AccountPage() {
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [view, setView] = useState<'dashboard' | 'profile' | 'orders' | 'wishlist' | 'admin-products' | 'admin-categories' | 'admin-offers'>('dashboard');
+  const [view, setView] = useState<'dashboard' | 'profile' | 'orders' | 'wishlist' | 'admin-products' | 'admin-categories' | 'admin-offers' | 'admin-hero'>('dashboard');
   const [profileName, setProfileName] = useState('');
   const [profileSaving, setProfileSaving] = useState(false);
   const [newEmail, setNewEmail] = useState('');
@@ -285,6 +286,9 @@ export function AccountPage() {
             {view === 'admin-offers' && isAdmin && (
               <OffersAdmin />
             )}
+            {view === 'admin-hero' && isAdmin && (
+              <HeroImagesAdmin />
+            )}
             {view === 'wishlist' && (
               <div>
                 <h2 className="font-display font-bold text-xl text-gray-900 mb-6">Lista de Deseos</h2>
@@ -409,7 +413,7 @@ export function AccountPage() {
           {isAdmin && (
             <div className="mt-8">
               <h2 className="font-display font-bold text-xl text-gray-900 mb-4">Administrar Tienda</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <button onClick={() => setView('admin-products')} className="bg-white rounded-xl shadow-sm p-6 text-left hover:shadow-md transition-shadow border border-primary-100 hover:border-primary-300">
                   <Package className="w-8 h-8 text-primary-600 mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-1">Productos</h3>
@@ -424,6 +428,11 @@ export function AccountPage() {
                   <Percent className="w-8 h-8 text-accent-600 mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-1">Ofertas</h3>
                   <p className="text-sm text-gray-500">Activar descuentos y destacados</p>
+                </button>
+                <button onClick={() => setView('admin-hero')} className="bg-white rounded-xl shadow-sm p-6 text-left hover:shadow-md transition-shadow border border-primary-100 hover:border-primary-300">
+                  <Image className="w-8 h-8 text-primary-600 mb-3" />
+                  <h3 className="font-semibold text-gray-900 mb-1">Hero Banner</h3>
+                  <p className="text-sm text-gray-500">Gestionar imagenes del banner principal</p>
                 </button>
               </div>
             </div>
