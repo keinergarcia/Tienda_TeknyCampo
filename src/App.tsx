@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
 import { ProductProvider } from '@/context/ProductContext';
+import { WishlistProvider } from '@/context/WishlistContext';
 import { Layout } from '@/components/layout/Layout';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
@@ -31,6 +32,7 @@ function App() {
       <AuthProvider>
         <ProductProvider>
           <CartProvider>
+            <WishlistProvider>
             <Router>
               <Routes>
                 <Route path="/" element={<Layout />}>
@@ -52,6 +54,7 @@ function App() {
                 </Route>
               </Routes>
             </Router>
+            </WishlistProvider>
           </CartProvider>
         </ProductProvider>
       </AuthProvider>

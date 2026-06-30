@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Package } from 'lucide-react';
+import { ShoppingCart, Package, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
+import { useWishlist } from '@/context/WishlistContext';
 import type { Product } from '@/types';
 
 interface ProductCardProps {
@@ -9,6 +11,14 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
+  const { user } = useAuth();
+  const { wishlistIds, toggleWishlist } = useWishlist();
+
+  const handleToggleWishlist = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await toggleWishlist(product.id);
+  };
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -56,6 +66,18 @@ export function ProductCard({ product }: ProductCardProps) {
               </span>
             )}
           </div>
+
+          {user && (
+            <button
+              onClick={handleToggleWishlist}
+              className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md hover:scale-110 transition-transform"
+              aria-label={wishlistIds.has(product.id) ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+            >
+              <Heart
+                className={`w-5 h-5 ${wishlistIds.has(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
+              />
+            </button>
+          )}
 
           {product.stock <= 0 && (
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShoppingCart, Minus, Plus, Package, Check } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Minus, Plus, Package, Check, Heart } from 'lucide-react';
 import { useProducts } from '@/context/ProductContext';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ProductCard } from '@/components/products/ProductCard';
 import type { Product } from '@/types';
@@ -16,6 +18,8 @@ export function ProductDetailPage() {
   const navigate = useNavigate();
   const { getProductBySlug, products, loading: productsLoading } = useProducts();
   const { addToCart } = useCart();
+  const { user } = useAuth();
+  const { wishlistIds, toggleWishlist } = useWishlist();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -101,6 +105,18 @@ export function ProductDetailPage() {
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100">
                   <Package className="w-32 h-32 text-primary-300" />
                 </div>
+              )}
+
+              {user && (
+                <button
+                  onClick={() => toggleWishlist(product.id)}
+                  className="absolute top-4 right-4 p-3 bg-white rounded-full shadow-md hover:scale-110 transition-transform z-10"
+                  aria-label={wishlistIds.has(product.id) ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+                >
+                  <Heart
+                    className={`w-6 h-6 ${wishlistIds.has(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
+                  />
+                </button>
               )}
 
               {/* Badges */}

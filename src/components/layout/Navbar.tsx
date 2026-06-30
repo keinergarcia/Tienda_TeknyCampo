@@ -51,7 +51,7 @@ export function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center gap-2 group shrink-0">
             <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center group-hover:bg-primary-700 transition-colors">
               <Leaf className="w-6 h-6 text-white" />
             </div>
@@ -60,12 +60,12 @@ export function Navbar() {
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center justify-center gap-6 lg:gap-8 flex-1 lg:flex-none mx-4 lg:mx-0">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`font-medium transition-colors ${
+                className={`font-medium transition-colors whitespace-nowrap ${
                   isActive(link.path)
                     ? 'text-primary-600'
                     : 'text-gray-700 hover:text-primary-600'
@@ -89,7 +89,7 @@ export function Navbar() {
             </div>
           </form>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 shrink-0">
             <Link
               to="/carrito"
               className="relative p-2 text-gray-700 hover:text-primary-600 transition-colors"

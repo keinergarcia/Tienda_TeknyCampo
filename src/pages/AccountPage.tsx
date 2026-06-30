@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, ShoppingBag, Heart, LogOut, Settings, Package, Save, Trash2, ArrowLeft, Key, CheckCircle, AlertCircle, Layers, Percent } from 'lucide-react';
+import { User, Mail, Lock, ShoppingBag, Heart, LogOut, Settings, Package, Save, Trash2, ArrowLeft, Key, CheckCircle, AlertCircle, Layers, Percent, ShoppingCart } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useCart } from '@/context/CartContext';
 import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ProductsAdmin } from '@/pages/admin/ProductsAdmin';
@@ -33,6 +34,7 @@ function CheckoutView() {
 
 export function AccountPage() {
   const { user, isAdmin, loading, signIn, signUp, signOut } = useAuth();
+  const { addToCart } = useCart();
   const [searchParams] = useSearchParams();
   const isCheckoutFlow = searchParams.get('checkout') === 'true';
   const [isLogin, setIsLogin] = useState(true);
@@ -72,7 +74,7 @@ export function AccountPage() {
   useEffect(() => {
     if (user && view === 'wishlist') {
       setWishlistLoading(true);
-      supabase.from('wishlists').select('*, product:products(*)').eq('user_id', user.id).order('created_at', { ascending: false }).then(({ data }) => {
+      supabase.from('wishlists').select('*, product:products(*, images:product_images(*))').eq('user_id', user.id).order('created_at', { ascending: false }).then(({ data }) => {
         if (data) setWishlist(data);
         setWishlistLoading(false);
       });
@@ -293,18 +295,50 @@ export function AccountPage() {
                     <Link to="/productos" className="btn-primary mt-4 inline-flex">Explorar Productos</Link>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {wishlist.map((w) => w.product && (
-                      <div key={w.id} className="bg-white rounded-xl shadow-sm p-4 flex items-center gap-4">
-                        <Link to={`/producto/${w.product.slug}`} className="flex-1 min-w-0">
-                          <p className="font-medium text-gray-900 truncate">{w.product.name}</p>
-                          <p className="text-sm text-primary-600">${w.product.price.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</p>
-                        </Link>
-                        <button onClick={() => removeFromWishlist(w.id)} className="p-2 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ))}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {wishlist.map((w) => {
+                      const p = w.product;
+                      if (!p) return null;
+                      const firstImage = p.images?.[0]?.url
+                        ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/product-images/${p.images[0].url}`
+                        : p.image_url;
+                      return (
+                        <div key={w.id} className="bg-white rounded-xl shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
+                          <Link to={`/producto/${p.slug}`} className="block">
+                            <div className="aspect-square bg-gray-100 relative">
+                              {firstImage ? (
+                                <img src={firstImage} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-primary-50">
+                                  <Package className="w-12 h-12 text-primary-300" />
+                                </div>
+                              )}
+                              <button
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFromWishlist(w.id); }}
+                                className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md hover:scale-110 transition-transform"
+                                aria-label="Quitar de favoritos"
+                              >
+                                <Trash2 className="w-4 h-4 text-red-500" />
+                              </button>
+                            </div>
+                          </Link>
+                          <div className="p-4">
+                            <p className="font-medium text-gray-900 truncate">{p.name}</p>
+                            <p className="text-lg font-bold text-primary-700 mt-1">
+                              ${p.price.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                            </p>
+                            <button
+                              onClick={() => addToCart(p, 1)}
+                              className="mt-3 w-full btn-primary text-sm"
+                              aria-label={`Agregar ${p.name} al carrito`}
+                            >
+                              <ShoppingCart className="w-4 h-4 mr-2" />
+                              Agregar al Carrito
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
