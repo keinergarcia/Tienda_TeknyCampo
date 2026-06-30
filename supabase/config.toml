@@ -1,0 +1,15 @@
+[functions]
+[functions.api]
+verify_jwt = false
+
+[functions.products]
+verify_jwt = false
+
+[functions.cart]
+verify_jwt = true
+
+[functions.orders]
+verify_jwt = true
+
+[functions.auth]
+verify_jwt = false
