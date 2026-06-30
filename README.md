@@ -1,66 +1,66 @@
 # Tekny Campo 🛒
 
-E-commerce platform for agricultural supplies built with React, TypeScript, and Supabase.
+Plataforma de comercio electrónico para insumos agropecuarios, construida con React, TypeScript y Supabase.
 
-## Tech Stack
+## Tecnologías
 
-| Layer | Technology |
+| Capa | Tecnología |
 |---|---|
 | Frontend | React 18, TypeScript, Tailwind CSS, Vite |
 | Backend | Supabase (PostgreSQL, Auth, Storage, Edge Functions) |
-| State | React Context (Auth, Cart, Products) |
-| Icons | Lucide React |
-| Routing | React Router v7 |
+| Estado | React Context (Auth, Cart, Products) |
+| Iconos | Lucide React |
+| Rutas | React Router v7 |
 | Build | Vite 5 |
 
-## Features
+## Funcionalidades
 
-- **Product Catalog** — Browse by category, search, filter by offers/featured
-- **Shopping Cart** — Anonymous (session-based) or authenticated, persisted in Supabase
-- **User Auth** — Sign up / login, profile editing, secure email & password change
-- **Order History** — Track order status (pending, confirmed, shipped, delivered, cancelled)
-- **Wishlist** — Save products for later
-- **Admin Panel** — Full CRUD for products (with 1-5 images + auto WebP conversion), categories, and offer/featured toggles
-- **Image Upload** — PNG/JPG auto-converted to WebP via browser Canvas API, stored in Supabase Storage
-- **Responsive** — Mobile-first design with Tailwind CSS
-- **Security** — Row Level Security (RLS) policies, admin role via `app_metadata`
+- **Catálogo de productos** — Navegación por categorías, búsqueda, filtros de ofertas y destacados
+- **Carrito de compras** — Anónimo (basado en sesión) o autenticado, persistido en Supabase
+- **Autenticación** — Registro / inicio de sesión, edición de perfil, cambio seguro de correo y contraseña
+- **Historial de pedidos** — Seguimiento de estado (pendiente, confirmado, enviado, entregado, cancelado)
+- **Lista de deseos** — Guarda productos para después
+- **Panel de administración** — CRUD completo de productos (con 1-5 imágenes + conversión automática a WebP), categorías y gestión de ofertas/destacados
+- **Subida de imágenes** — PNG/JPG se convierten automáticamente a WebP mediante Canvas API del navegador, almacenadas en Supabase Storage
+- **Responsive** — Diseño mobile-first con Tailwind CSS
+- **Seguridad** — Políticas Row Level Security (RLS), rol de administrador vía `app_metadata`
 
-## Getting Started
+## Primeros pasos
 
-### Prerequisites
+### Requisitos
 
 - Node.js 18+
-- A Supabase project (free tier works)
+- Un proyecto de Supabase (el plan gratuito funciona)
 
-### Environment Variables
+### Variables de entorno
 
-Create a `.env` file in the project root:
+Crea un archivo `.env` en la raíz del proyecto:
 
 ```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+VITE_SUPABASE_ANON_KEY=tu-anon-key
 ```
 
-### Installation
+### Instalación
 
 ```bash
 npm install
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173`.
+La aplicación estará disponible en `http://localhost:5173`.
 
-### Database Setup
+### Configuración de la base de datos
 
-Push the migrations and seed data to your Supabase project:
+Ejecuta las migraciones y datos iniciales en tu proyecto de Supabase:
 
 ```bash
-npx supabase db push --db-url "postgresql://postgres:password@db.your-project.supabase.co:5432/postgres"
+npx supabase db push --db-url "postgresql://postgres:contraseña@db.tu-proyecto.supabase.co:5432/postgres"
 ```
 
-### Creating an Admin User
+### Crear un usuario administrador
 
-Run this SQL in the Supabase SQL Editor (replace with your user's ID):
+Ejecuta este SQL en el Editor SQL de Supabase (reemplaza con el ID del usuario):
 
 ```sql
 UPDATE auth.users
@@ -68,29 +68,29 @@ SET raw_app_meta_data = raw_app_meta_data || '{"role":"admin"}'
 WHERE email = 'admin@teknycampo.com';
 ```
 
-## Project Structure
+## Estructura del proyecto
 
 ```
 src/
-├── components/       # Reusable UI components
-│   ├── admin/        # Admin panel components (ImageUploader)
+├── components/       # Componentes reutilizables
+│   ├── admin/        # Componentes del panel admin (ImageUploader)
 │   ├── layout/       # Navbar, Footer, Layout
 │   ├── products/     # ProductCard, CategoryCard
 │   └── ui/           # LoadingSpinner, EmptyState
-├── context/          # React contexts (Auth, Cart, Products)
-├── lib/              # Utilities (Supabase client, session, upload)
-├── pages/            # Route pages
-│   └── admin/        # Admin pages (Products, Categories, Offers)
-└── types/            # TypeScript interfaces
+├── context/          # Contextos de React (Auth, Cart, Products)
+├── lib/              # Utilidades (cliente Supabase, sesión, subida)
+├── pages/            # Páginas de rutas
+│   └── admin/        # Páginas admin (Productos, Categorías, Ofertas)
+└── types/            # Interfaces de TypeScript
 ```
 
-## Security
+## Seguridad
 
-- **RLS enabled** on all tables (products, categories, cart_items, orders, wishlists, product_images)
-- **Admin role** checked via `auth.jwt() -> 'app_metadata' ->> 'role'`, never from `user_metadata`
-- **Anon cart** restricted to rows with a valid `session_id`
-- **Storage bucket** public-read, admin-write only
+- **RLS habilitado** en todas las tablas (products, categories, cart_items, orders, wishlists, product_images)
+- **Rol de administrador** verificado mediante `auth.jwt() -> 'app_metadata' ->> 'role'`, nunca desde `user_metadata`
+- **Carrito anónimo** restringido a filas con un `session_id` válido
+- **Bucket de almacenamiento** lectura pública, escritura solo para administradores
 
-## License
+## Licencia
 
 MIT
