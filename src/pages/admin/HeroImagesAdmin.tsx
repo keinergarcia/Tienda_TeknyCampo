@@ -49,14 +49,11 @@ export function HeroImagesAdmin() {
 
       if (dbError) throw dbError;
 
-      const { data } = await supabase
+      const { data: refreshed } = await supabase
         .from('hero_images')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (data) setImages((prev) => [data, ...prev]);
+        .order('created_at', { ascending: false });
+      if (refreshed) setImages(refreshed);
     } catch (err) {
       console.error('Error al subir imagen:', err);
     } finally {
