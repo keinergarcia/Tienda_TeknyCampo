@@ -6,10 +6,10 @@ import {
   X,
   Search,
   User,
-  Leaf,
   LogOut,
   ChevronDown,
 } from 'lucide-react';
+import logoImg from '@/assets/images/logotipo/teknycampo-icon.png';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 
@@ -51,10 +51,8 @@ export function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2 group shrink-0">
-            <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center group-hover:bg-primary-700 transition-colors">
-              <Leaf className="w-6 h-6 text-white" />
-            </div>
+          <Link to="/" className="flex items-center gap-3 shrink-0">
+            <img src={logoImg} alt="Tekny Campo" className="h-10 w-auto" />
             <span className="font-display font-bold text-xl text-primary-800">
               Tekny Campo
             </span>

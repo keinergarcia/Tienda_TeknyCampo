@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Leaf, Mail, Phone, MapPin, Facebook, Instagram, Twitter } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Instagram, Twitter } from 'lucide-react';
+import logoImg from '@/assets/images/logotipo/teknycampo-icon.png';
 
 export function Footer() {
   return (
@@ -8,10 +9,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                <Leaf className="w-6 h-6 text-primary-600" />
-              </div>
+            <Link to="/" className="flex items-center gap-3 mb-4">
+              <img src={logoImg} alt="Tekny Campo" className="h-10 w-auto" />
               <span className="font-display font-bold text-xl">Tekny Campo</span>
             </Link>
             <p className="text-primary-200 text-sm leading-relaxed">
