@@ -45,7 +45,7 @@ export function CartPage() {
       navigate('/mi-cuenta');
       return;
     }
-    navigate('/mi-cuenta?checkout=true');
+    navigate('/checkout');
   };
 
   return (

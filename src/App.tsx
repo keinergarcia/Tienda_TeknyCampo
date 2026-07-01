@@ -16,6 +16,7 @@ const CategoryDetailPage = lazy(() => import('@/pages/CategoryDetailPage').then(
 const OffersPage = lazy(() => import('@/pages/OffersPage').then(m => ({ default: m.OffersPage })));
 const CartPage = lazy(() => import('@/pages/CartPage').then(m => ({ default: m.CartPage })));
 const AccountPage = lazy(() => import('@/pages/AccountPage').then(m => ({ default: m.AccountPage })));
+const CheckoutPage = lazy(() => import('@/pages/CheckoutPage').then(m => ({ default: m.CheckoutPage })));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 const AdminPage = lazy(() => import('@/pages/admin/AdminPage').then(m => ({ default: m.AdminPage })));
 const ProductsAdmin = lazy(() => import('@/pages/admin/ProductsAdmin').then(m => ({ default: m.ProductsAdmin })));
@@ -44,6 +45,7 @@ function App() {
                   <Route path="ofertas" element={<LazyRoute><OffersPage /></LazyRoute>} />
                   <Route path="carrito" element={<LazyRoute><CartPage /></LazyRoute>} />
                   <Route path="mi-cuenta" element={<LazyRoute><AccountPage /></LazyRoute>} />
+                  <Route path="checkout" element={<LazyRoute><CheckoutPage /></LazyRoute>} />
                   <Route path="*" element={<LazyRoute><NotFoundPage /></LazyRoute>} />
                 </Route>
                 <Route path="admin" element={<LazyRoute><AdminPage /></LazyRoute>}>

@@ -56,6 +56,11 @@ export interface Order {
   address: string;
   city: string;
   notes: string | null;
+  first_name?: string;
+  last_name?: string;
+  neighborhood?: string;
+  postal_code?: string;
+  department?: string;
   created_at: string;
   items?: OrderItem[];
 }

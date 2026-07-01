@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { User, Mail, Lock, ShoppingBag, Heart, LogOut, Settings, Package, Save, Trash2, ArrowLeft, Key, CheckCircle, AlertCircle, Layers, Percent, ShoppingCart, Image, MapPin, Plus, Pencil } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
@@ -12,33 +12,9 @@ import { HeroImagesAdmin } from '@/pages/admin/HeroImagesAdmin';
 import { AddressForm } from '@/components/address/AddressForm';
 import type { Order, WishlistItem, Address } from '@/types';
 
-function CheckoutView() {
-  const navigate = useNavigate();
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-gradient-to-r from-primary-600 to-primary-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="font-display font-bold text-3xl text-white">Checkout</h1>
-          <p className="text-primary-100 mt-2">Completa tu pedido</p>
-        </div>
-      </div>
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-          <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h2 className="font-display font-semibold text-xl text-gray-900 mb-2">Proximamente</h2>
-          <p className="text-gray-500 mb-6">El sistema de pagos estara disponible pronto.</p>
-          <button onClick={() => navigate(-1)} className="btn-primary">Volver</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function AccountPage() {
   const { user, isAdmin, loading, signIn, signUp, signOut } = useAuth();
   const { addToCart } = useCart();
-  const [searchParams] = useSearchParams();
-  const isCheckoutFlow = searchParams.get('checkout') === 'true';
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -175,7 +151,6 @@ export function AccountPage() {
   };
 
   if (loading) return <LoadingSpinner text="Cargando..." />;
-  if (isCheckoutFlow) return <CheckoutView />;
 
   if (user) {
     if (view !== 'dashboard') {
