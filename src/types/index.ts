@@ -45,6 +45,7 @@ export interface CartItem {
 
 export interface Order {
   id: string;
+  order_number?: string;
   user_id: string;
   status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
   subtotal: number;

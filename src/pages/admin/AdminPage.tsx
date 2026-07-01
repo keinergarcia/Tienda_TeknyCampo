@@ -1,12 +1,15 @@
 import { Link, Outlet, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { Package, Layers, Percent, LayoutDashboard, ArrowLeft } from 'lucide-react';
+import { Package, Layers, Percent, LayoutDashboard, ArrowLeft, ShoppingBag, TrendingUp, Users } from 'lucide-react';
 
 const adminLinks = [
   { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
   { name: 'Productos', path: '/admin/productos', icon: Package },
   { name: 'Categorias', path: '/admin/categorias', icon: Layers },
   { name: 'Ofertas', path: '/admin/ofertas', icon: Percent },
+  { name: 'Pedidos', path: '/admin/pedidos', icon: ShoppingBag },
+  { name: 'Ventas', path: '/admin/ventas', icon: TrendingUp },
+  { name: 'Clientes', path: '/admin/clientes', icon: Users },
 ];
 
 export function AdminPage() {
@@ -69,7 +72,22 @@ export function AdminPage() {
             {isDashboard ? (
               <div className="bg-white rounded-xl shadow-sm p-8">
                 <h2 className="font-display font-bold text-xl text-gray-900 mb-6">Bienvenido al Panel de Administracion</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <Link to="/admin/pedidos" className="p-6 bg-blue-50 rounded-xl hover:shadow-md transition-shadow">
+                    <ShoppingBag className="w-10 h-10 text-blue-600 mb-3" />
+                    <h3 className="font-semibold text-gray-900">Pedidos</h3>
+                    <p className="text-sm text-gray-500 mt-1">Gestiona pedidos, estados y envios</p>
+                  </Link>
+                  <Link to="/admin/ventas" className="p-6 bg-green-50 rounded-xl hover:shadow-md transition-shadow">
+                    <TrendingUp className="w-10 h-10 text-green-600 mb-3" />
+                    <h3 className="font-semibold text-gray-900">Ventas</h3>
+                    <p className="text-sm text-gray-500 mt-1">Reportes y analitica financiera</p>
+                  </Link>
+                  <Link to="/admin/clientes" className="p-6 bg-purple-50 rounded-xl hover:shadow-md transition-shadow">
+                    <Users className="w-10 h-10 text-purple-600 mb-3" />
+                    <h3 className="font-semibold text-gray-900">Clientes</h3>
+                    <p className="text-sm text-gray-500 mt-1">Perfiles y segmentacion de audiencia</p>
+                  </Link>
                   <Link to="/admin/productos" className="p-6 bg-primary-50 rounded-xl hover:shadow-md transition-shadow">
                     <Package className="w-10 h-10 text-primary-600 mb-3" />
                     <h3 className="font-semibold text-gray-900">Productos</h3>
