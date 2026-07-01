@@ -10,6 +10,7 @@ import { CategoriesAdmin } from '@/pages/admin/CategoriesAdmin';
 import { OffersAdmin } from '@/pages/admin/OffersAdmin';
 import { HeroImagesAdmin } from '@/pages/admin/HeroImagesAdmin';
 import { AddressForm } from '@/components/address/AddressForm';
+import { OrderStatusBar } from '@/components/orders/OrderStatusBar';
 import type { Order, WishlistItem, Address } from '@/types';
 
 export function AccountPage() {
@@ -32,6 +33,17 @@ export function AccountPage() {
   // Orders
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+
+  const cancelOrder = async (id: string) => {
+    if (!confirm('¿Seguro que deseas cancelar este pedido?')) return;
+    setCancellingId(id);
+    const { error } = await supabase.from('orders').update({ status: 'cancelled' }).eq('id', id).eq('user_id', user!.id);
+    if (!error) {
+      setOrders((prev) => prev.map((o) => o.id === id ? { ...o, status: 'cancelled' as const } : o));
+    }
+    setCancellingId(null);
+  };
 
   // Wishlist
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
@@ -234,9 +246,11 @@ export function AccountPage() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {orders.map((order) => (
+                    {orders.map((order) => {
+                      const canCancel = order.status === 'pending' || order.status === 'confirmed';
+                      return (
                       <div key={order.id} className="bg-white rounded-xl shadow-sm p-6">
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-start justify-between mb-4">
                           <div>
                             <p className="text-sm text-gray-500">Pedido #{order.id.slice(0, 8)}</p>
                             <p className="text-xs text-gray-400">{new Date(order.created_at).toLocaleDateString('es-ES')}</p>
@@ -254,6 +268,15 @@ export function AccountPage() {
                              order.status === 'delivered' ? 'Entregado' : 'Cancelado'}
                           </span>
                         </div>
+
+                        <OrderStatusBar order={order} />
+
+                        <div className="my-4 p-4 bg-gray-50 rounded-lg grid grid-cols-2 gap-2 text-sm">
+                          {order.neighborhood && <div><span className="text-gray-500">Barrio:</span> <span className="text-gray-900">{order.neighborhood}</span></div>}
+                          {order.department && <div><span className="text-gray-500">Depto:</span> <span className="text-gray-900">{order.department}</span></div>}
+                          <div className="col-span-2"><span className="text-gray-500">Direccion:</span> <span className="text-gray-900">{order.address}</span></div>
+                        </div>
+
                         {order.items?.map((item) => (
                           <div key={item.id} className="flex items-center justify-between py-2 border-t border-gray-100">
                             <span className="text-sm text-gray-900">{item.product_name} x{item.quantity}</span>
@@ -264,8 +287,19 @@ export function AccountPage() {
                           <span>Total</span>
                           <span className="text-primary-700">${order.total.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</span>
                         </div>
+
+                        {canCancel && (
+                          <button
+                            onClick={() => cancelOrder(order.id)}
+                            disabled={cancellingId === order.id}
+                            className="mt-4 text-sm text-red-600 hover:text-red-700 font-medium disabled:opacity-50"
+                          >
+                            {cancellingId === order.id ? 'Cancelando...' : 'Cancelar Pedido'}
+                          </button>
+                        )}
                       </div>
-                    ))}
+                    );
+                    })}
                   </div>
                 )}
               </div>
