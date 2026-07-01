@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { Save, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
@@ -8,6 +8,19 @@ interface AddressFormProps {
   address?: Address;
   onSave: () => void;
   onCancel: () => void;
+}
+
+const inputClass = 'input-field text-sm';
+const labelClass = 'block text-xs font-medium text-gray-700 mb-1';
+const groupClass = 'flex-1';
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className={labelClass}>{label}</label>
+      {children}
+    </div>
+  );
 }
 
 export function AddressForm({ address, onSave, onCancel }: AddressFormProps) {
@@ -45,17 +58,6 @@ export function AddressForm({ address, onSave, onCancel }: AddressFormProps) {
     setSaving(false);
     onSave();
   };
-
-  const inputClass = 'input-field text-sm';
-  const labelClass = 'block text-xs font-medium text-gray-700 mb-1';
-  const groupClass = 'flex-1';
-
-  const Field = ({ label, children }: { label: string; children: ReactNode }) => (
-    <div className="flex flex-col gap-1">
-      <label className={labelClass}>{label}</label>
-      {children}
-    </div>
-  );
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm p-6">
