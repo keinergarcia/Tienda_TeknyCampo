@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, ShoppingBag, Heart, LogOut, Settings, Package, Save, Trash2, ArrowLeft, Key, CheckCircle, AlertCircle, Layers, Percent, ShoppingCart, Image } from 'lucide-react';
+import { User, Mail, Lock, ShoppingBag, Heart, LogOut, Settings, Package, Save, Trash2, ArrowLeft, Key, CheckCircle, AlertCircle, Layers, Percent, ShoppingCart, Image, MapPin, Plus, Pencil } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { supabase } from '@/lib/supabase';
@@ -9,7 +9,8 @@ import { ProductsAdmin } from '@/pages/admin/ProductsAdmin';
 import { CategoriesAdmin } from '@/pages/admin/CategoriesAdmin';
 import { OffersAdmin } from '@/pages/admin/OffersAdmin';
 import { HeroImagesAdmin } from '@/pages/admin/HeroImagesAdmin';
-import type { Order, WishlistItem } from '@/types';
+import { AddressForm } from '@/components/address/AddressForm';
+import type { Order, WishlistItem, Address } from '@/types';
 
 function CheckoutView() {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ export function AccountPage() {
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [view, setView] = useState<'dashboard' | 'profile' | 'orders' | 'wishlist' | 'admin-products' | 'admin-categories' | 'admin-offers' | 'admin-hero'>('dashboard');
+  const [view, setView] = useState<'dashboard' | 'profile' | 'orders' | 'wishlist' | 'addresses' | 'admin-products' | 'admin-categories' | 'admin-offers' | 'admin-hero'>('dashboard');
   const [profileName, setProfileName] = useState('');
   const [profileSaving, setProfileSaving] = useState(false);
   const [newEmail, setNewEmail] = useState('');
@@ -59,6 +60,24 @@ export function AccountPage() {
   // Wishlist
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+
+  // Addresses
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addressesLoading, setAddressesLoading] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+  const [showAddressForm, setShowAddressForm] = useState(false);
+
+  const loadAddresses = useCallback(async () => {
+    if (!user) return;
+    setAddressesLoading(true);
+    const { data } = await supabase.from('addresses').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
+    if (data) setAddresses(data);
+    setAddressesLoading(false);
+  }, [user]);
+
+  useEffect(() => {
+    if (user && view === 'addresses') loadAddresses();
+  }, [user, view, loadAddresses]);
 
   const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Usuario';
 
@@ -286,6 +305,67 @@ export function AccountPage() {
             {view === 'admin-offers' && isAdmin && (
               <OffersAdmin />
             )}
+            {view === 'addresses' && (
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="font-display font-bold text-xl text-gray-900">Mis Direcciones</h2>
+                  <button onClick={() => { setEditingAddress(null); setShowAddressForm(true); }} className="btn-primary text-sm">
+                    <Plus className="w-4 h-4 mr-2" />Agregar Direccion
+                  </button>
+                </div>
+
+                {showAddressForm && (
+                  <div className="mb-6">
+                    <AddressForm
+                      address={editingAddress || undefined}
+                      onSave={() => { setShowAddressForm(false); setEditingAddress(null); loadAddresses(); }}
+                      onCancel={() => { setShowAddressForm(false); setEditingAddress(null); }}
+                    />
+                  </div>
+                )}
+
+                {addressesLoading ? <LoadingSpinner text="Cargando direcciones..." /> : addresses.length === 0 && !showAddressForm ? (
+                  <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+                    <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">No has agregado direcciones aun.</p>
+                    <button onClick={() => { setEditingAddress(null); setShowAddressForm(true); }} className="btn-primary mt-4 inline-flex">
+                      <Plus className="w-4 h-4 mr-2" />Agregar Direccion
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {addresses.map((addr) => (
+                      <div key={addr.id} className="bg-white rounded-xl shadow-sm p-5 relative">
+                        {addr.is_default && (
+                          <span className="absolute top-3 right-3 px-2 py-0.5 bg-primary-100 text-primary-700 text-xs font-medium rounded">
+                            Predeterminada
+                          </span>
+                        )}
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                            <MapPin className="w-5 h-5 text-primary-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-gray-900">{addr.first_name} {addr.last_name}</p>
+                            <p className="text-sm text-gray-500">{addr.phone}</p>
+                            <p className="text-sm text-gray-700 mt-2">{addr.address}</p>
+                            <p className="text-sm text-gray-500">{addr.neighborhood}, {addr.city}</p>
+                            <p className="text-sm text-gray-500">{addr.department} - CP {addr.postal_code}</p>
+                            {addr.notes && <p className="text-sm text-gray-400 mt-1 italic">{addr.notes}</p>}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => { setEditingAddress(addr); setShowAddressForm(true); }}
+                          className="mt-3 flex items-center gap-1 text-sm text-primary-600 hover:text-primary-700 font-medium"
+                        >
+                          <Pencil className="w-3 h-3" /> Editar
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
             {view === 'admin-hero' && isAdmin && (
               <HeroImagesAdmin />
             )}
@@ -380,6 +460,19 @@ export function AccountPage() {
               <p className="text-gray-600 text-sm mb-4">Gestiona tu informacion personal y preferencias.</p>
               <span className="inline-flex items-center gap-2 text-primary-600 text-sm font-medium">
                 <Settings className="w-4 h-4" />Editar Perfil
+              </span>
+            </button>
+
+            <button onClick={() => { setView('addresses'); loadAddresses(); }} className="bg-white rounded-xl shadow-sm p-6 text-left hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                  <MapPin className="w-5 h-5 text-primary-600" />
+                </div>
+                <h2 className="font-semibold text-gray-900">Mis Direcciones</h2>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">Administra tus direcciones de envio.</p>
+              <span className="inline-flex items-center gap-2 text-primary-600 text-sm font-medium">
+                <MapPin className="w-4 h-4" />Ver Direcciones
               </span>
             </button>
 

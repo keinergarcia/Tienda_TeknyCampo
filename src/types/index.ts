@@ -70,6 +70,23 @@ export interface OrderItem {
   created_at: string;
 }
 
+export interface Address {
+  id: string;
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  address: string;
+  neighborhood: string;
+  postal_code: string;
+  city: string;
+  department: string;
+  notes: string;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface WishlistItem {
   id: string;
   user_id: string;
